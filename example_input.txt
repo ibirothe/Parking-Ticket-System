@@ -1,0 +1,11 @@
+Create_parking_lot 5
+Park L-HH-123
+Park L-HH-999
+Park L-BB-001
+Slot_number_for_car_with_number L-HH-123
+Leave 2
+All_parked_vehicles
+Park L-HH-777
+Park L-HH-270
+Park L-HH-314
+Park L-HH-999
