@@ -14,7 +14,7 @@ def parking_management():
     pm.create_parking_slots(3)
     yield pm
 
-    # Optional cleanup after test
+    # Cleanup after test
     pm.db.cursor.execute("DELETE FROM cars")
     pm.db.cursor.execute("UPDATE slots SET occupied = 0")
     pm.db.commit()
