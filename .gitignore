@@ -1,10 +1,12 @@
 # Python
 __pycache__/
 *.pyc
-
-# Pytest cache
 .pytest_cache/
+**/.pytest_cache/
 
 # SQLite DB
 *.sqlite
 *.db
+
+# Virtual environment
+venv/
