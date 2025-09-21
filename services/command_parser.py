@@ -1,13 +1,12 @@
 class CommandParser:
     def __init__(self, parking_management):
         self.pm = parking_management
-        # Map command strings to handler methods
         self.commands = {
             "Create_parking_lot": self.handle_create_parking_lot,
             "Park": self.handle_park,
             "Leave": self.handle_leave,
             "Slot_number_for_car_with_number": self.handle_slot_for_car,
-            "All_parked_vehicles": self.handle_all_parked_vehicles
+            "All_parked_vehicles": self.handle_all_parked_vehicles,
         }
 
     def parse(self, query):
@@ -25,7 +24,6 @@ class CommandParser:
         else:
             print("Query not recognized.")
 
-    # ---------------- Command Handlers ----------------
     def handle_create_parking_lot(self, tokens):
         capacity = int(tokens[1])
         if self.pm.create_parking_slots(capacity):
@@ -37,15 +35,22 @@ class CommandParser:
         if slot == -1:
             print("Sorry, Parking Lot is full, No Parking Slots Available.")
         else:
-            print(f'Car with vehicle registration number "{vehicle_registration}" has been parked at slot number {slot}')
+            print(
+                f'Car with registration number "{vehicle_registration}" '
+                f"has been parked at slot number {slot}"
+            )
 
     def handle_leave(self, tokens):
         slot_number = int(tokens[1])
         result = self.pm.deallocate_parking_slot(slot_number)
         if result:
-            print(f'Slot number {result["slot_number"]} vacated, the car with vehicle registration number "{result["vehicle_registration"]}" left the space')
+            print(
+                f'Slot number {result["slot_number"]} vacated, '
+                f"the car with registration number "
+                f'"{result["vehicle_registration"]}" left the space'
+            )
         else:
-            print(f'Slot number {slot_number} cannot be vacated.')
+            print(f"Slot number {slot_number} cannot be vacated.")
 
     def handle_slot_for_car(self, tokens):
         vehicle_registration = tokens[1]
