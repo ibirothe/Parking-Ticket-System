@@ -3,6 +3,7 @@ from datetime import datetime
 from db.database import Database
 from models.car import Car
 
+
 class ParkingManagement:
     def __init__(self):
         self.db = Database()
@@ -49,8 +50,9 @@ class ParkingManagement:
         entry_time = datetime.now().isoformat()
         car = Car(vehicle_registration)
         self.db.cursor.execute(
-            "INSERT INTO cars(vehicle_registration, slot_number, entry_time) VALUES (?, ?, ?)",
-            (car.vehicle_registration, slot, entry_time)
+            "INSERT INTO cars(vehicle_registration, "
+            "slot_number, entry_time) VALUES (?, ?, ?)",
+            (car.vehicle_registration, slot, entry_time),
         )
         self.db.cursor.execute(
             "UPDATE slots SET occupied = 1 WHERE slot_number = ?", (slot,)
@@ -60,22 +62,29 @@ class ParkingManagement:
 
     def deallocate_parking_slot(self, slot_number):
         self.db.cursor.execute(
-            "SELECT vehicle_registration FROM cars WHERE slot_number = ?", (slot_number,)
+            "SELECT vehicle_registration FROM cars WHERE slot_number = ?",
+            (slot_number,),
         )
         row = self.db.cursor.fetchone()
         if not row:
             return False
         vehicle_registration = row[0]
         self.db.cursor.execute("DELETE FROM cars WHERE slot_number = ?", (slot_number,))
-        self.db.cursor.execute("UPDATE slots SET occupied = 0 WHERE slot_number = ?", (slot_number,))
+        self.db.cursor.execute(
+            "UPDATE slots SET occupied = 0 WHERE slot_number = ?", (slot_number,)
+        )
         heappush(self.available_parking_slots, slot_number)
         self.db.commit()
-        return {"vehicle_registration": vehicle_registration, "slot_number": slot_number}
+        return {
+            "vehicle_registration": vehicle_registration,
+            "slot_number": slot_number,
+        }
 
     # ---------------- Queries ----------------
     def get_parking_slot_by_vehicle(self, vehicle_registration):
         self.db.cursor.execute(
-            "SELECT slot_number FROM cars WHERE vehicle_registration = ?", (vehicle_registration,)
+            "SELECT slot_number FROM cars WHERE vehicle_registration = ?",
+            (vehicle_registration,),
         )
         row = self.db.cursor.fetchone()
         return row[0] if row else -1

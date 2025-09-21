@@ -8,8 +8,8 @@ if __name__ == "__main__":
     parser = CommandParser(parking_management)
 
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--input_file', required=True, help="Input File")
-    arg_parser.add_argument('--output_file', required=False, help="Output File")
+    arg_parser.add_argument("--input_file", required=True, help="Input File")
+    arg_parser.add_argument("--output_file", required=False, help="Output File")
     args = arg_parser.parse_args()
 
     if args.output_file:
