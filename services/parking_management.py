@@ -2,6 +2,9 @@ from heapq import heappush, heappop
 from datetime import datetime
 from db.database import Database
 from models.car import Car
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ParkingManagement:
@@ -35,7 +38,7 @@ class ParkingManagement:
             self.available_parking_slots = [i for i in range(1, max_capacity + 1)]
             return True
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return False
 
     def get_nearest_empty_slot(self):

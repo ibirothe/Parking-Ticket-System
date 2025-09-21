@@ -2,8 +2,12 @@ import sys
 import argparse
 from services.parking_management import ParkingManagement
 from services.command_parser import CommandParser
+import logging
+from utils.logger import setup_logging
 
 if __name__ == "__main__":
+    setup_logging(level=logging.DEBUG)
+
     parking_management = ParkingManagement()
     parser = CommandParser(parking_management)
 

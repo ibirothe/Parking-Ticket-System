@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class CommandParser:
     def __init__(self, parking_management):
         self.pm = parking_management
@@ -12,6 +17,7 @@ class CommandParser:
     def parse(self, query):
         tokens = query.strip().split()
         if not tokens:
+            logger.warning("Received empty query")
             return
 
         cmd = tokens[0]
@@ -20,43 +26,66 @@ class CommandParser:
             try:
                 handler(tokens)
             except Exception as e:
-                print(f"Error in Query - {query} : {e}")
+                logger.error("Error in query '%s': %s", query, e)
         else:
-            print("Query not recognized.")
+            logger.warning("Query not recognized: %s", query)
 
     def handle_create_parking_lot(self, tokens):
-        capacity = int(tokens[1])
-        if self.pm.create_parking_slots(capacity):
-            print(f"Created parking of {capacity} slots")
+        try:
+            capacity = int(tokens[1])
+            if self.pm.create_parking_slots(capacity):
+                logger.info("Created parking of %d slots", capacity)
+        except (IndexError, ValueError) as e:
+            logger.error("Invalid input for creating parking lot: %s", e)
 
     def handle_park(self, tokens):
-        vehicle_registration = tokens[1]
-        slot = self.pm.allocate_parking_slot(vehicle_registration)
-        if slot == -1:
-            print("Sorry, Parking Lot is full, No Parking Slots Available.")
-        else:
-            print(
-                f'Car with registration number "{vehicle_registration}" '
-                f"has been parked at slot number {slot}"
-            )
+        try:
+            vehicle_registration = tokens[1]
+            slot = self.pm.allocate_parking_slot(vehicle_registration)
+            if slot == -1:
+                logger.warning(
+                    "Sorry, Parking Lot is full. No Parking Slots Available."
+                )
+            else:
+                logger.info(
+                    'Car with registration number "%s"'
+                    "has been parked at slot number %d",
+                    vehicle_registration,
+                    slot,
+                )
+        except IndexError as e:
+            logger.error("Missing vehicle registration number: %s", e)
 
     def handle_leave(self, tokens):
-        slot_number = int(tokens[1])
-        result = self.pm.deallocate_parking_slot(slot_number)
-        if result:
-            print(
-                f'Slot number {result["slot_number"]} vacated, '
-                f"the car with registration number "
-                f'"{result["vehicle_registration"]}" left the space'
-            )
-        else:
-            print(f"Slot number {slot_number} cannot be vacated.")
+        try:
+            slot_number = int(tokens[1])
+            result = self.pm.deallocate_parking_slot(slot_number)
+            if result:
+                logger.info(
+                    "Slot number %d vacated, the car with"
+                    'registration number "%s" left the space',
+                    result["slot_number"],
+                    result["vehicle_registration"],
+                )
+            else:
+                logger.warning("Slot number %d cannot be vacated.", slot_number)
+        except (IndexError, ValueError) as e:
+            logger.error("Invalid input for leaving slot: %s", e)
 
     def handle_slot_for_car(self, tokens):
-        vehicle_registration = tokens[1]
-        slot = self.pm.get_parking_slot_by_vehicle(vehicle_registration)
-        print(slot if slot != -1 else "No parked car matches the query")
+        try:
+            vehicle_registration = tokens[1]
+            slot = self.pm.get_parking_slot_by_vehicle(vehicle_registration)
+            if slot != -1:
+                logger.info("Car '%s' is at slot number %d", vehicle_registration, slot)
+            else:
+                logger.info("No parked car matches the query: %s", vehicle_registration)
+        except IndexError as e:
+            logger.error("Missing vehicle registration number: %s", e)
 
     def handle_all_parked_vehicles(self, tokens):
         vehicles = self.pm.get_all_parked_vehicles()
-        print(",".join(vehicles) if vehicles else "No cars parked")
+        if vehicles:
+            logger.info("All parked vehicles: %s", ",".join(vehicles))
+        else:
+            logger.info("No cars parked")
