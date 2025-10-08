@@ -1,4 +1,5 @@
 import logging
+from services.report_service import ReportService
 
 logger = logging.getLogger(__name__)
 
@@ -6,14 +7,16 @@ logger = logging.getLogger(__name__)
 class CommandParser:
     def __init__(self, parking_management):
         self.pm = parking_management
+        self.report_service = ReportService(parking_management.db)
         self.commands = {
             "Create_parking_lot": self.handle_create_parking_lot,
             "Park": self.handle_park,
             "Leave": self.handle_leave,
             "Slot_number_for_car_with_number": self.handle_slot_for_car,
             "All_parked_vehicles": self.handle_all_parked_vehicles,
+            "Generate_report": self.handle_generate_report,  # <-- new
         }
-
+    
     def parse(self, query):
         tokens = query.strip().split()
         if not tokens:
@@ -89,3 +92,10 @@ class CommandParser:
             logger.info("All parked vehicles: %s", ",".join(vehicles))
         else:
             logger.info("No cars parked")
+
+    def handle_generate_report(self, tokens):
+        try:
+            report_type = tokens[1]
+            self.report_service.generate_report(report_type)
+        except IndexError:
+            logger.error("Missing report type. Usage: Generate_report <type>")
