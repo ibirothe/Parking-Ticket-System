@@ -6,6 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class ReportService:
     def __init__(self, db):
         self.db = db
@@ -23,21 +24,25 @@ class ReportService:
 
     def _report_occupancy(self):
         query = "SELECT slot_number, occupied FROM slots ORDER BY slot_number"
-        df = pd.read_sql_query(query, self.db.connection)
+        df = pd.read_sql_query(query, self.db.conn)
         occupied = df["occupied"].sum()
         available = len(df) - occupied
 
         plt.figure()
-        plt.pie([occupied, available], labels=["Occupied", "Available"], autopct="%1.1f%%")
+        plt.pie(
+            [occupied, available], labels=["Occupied", "Available"], autopct="%1.1f%%"
+        )
         plt.title("Current Parking Occupancy")
-        output_path = os.path.join(self.output_dir, f"occupancy_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
+        output_path = os.path.join(
+            self.output_dir, f"occupancy_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        )
         plt.savefig(output_path)
         plt.close()
         logger.info("Occupancy report saved to %s", output_path)
 
     def _report_clusters(self):
         query = "SELECT slot_number, occupied FROM slots ORDER BY slot_number"
-        df = pd.read_sql_query(query, self.db.connection)
+        df = pd.read_sql_query(query, self.db.conn)
 
         # Car cluster detection
         clusters = []
@@ -66,7 +71,9 @@ class ReportService:
         plt.ylabel("Number of Clusters")
         plt.xticks(rotation=0)
         plt.tight_layout()
-        output_path = os.path.join(self.output_dir, f"clusters_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
+        output_path = os.path.join(
+            self.output_dir, f"clusters_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        )
         plt.savefig(output_path)
         plt.close()
         logger.info(

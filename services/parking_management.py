@@ -83,6 +83,12 @@ class ParkingManagement:
             "slot_number": slot_number,
         }
 
+    def clear_parking_lot(self):
+        cursor = self.db.conn.cursor()
+        cursor.execute("UPDATE slots SET occupied = 0")
+        cursor.execute("DELETE FROM cars")
+        self.db.commit()
+
     # ---------------- Queries ----------------
     def get_parking_slot_by_vehicle(self, vehicle_registration):
         self.db.cursor.execute(

@@ -10,13 +10,14 @@ class CommandParser:
         self.report_service = ReportService(parking_management.db)
         self.commands = {
             "Create_parking_lot": self.handle_create_parking_lot,
+            "Clear_parking_lot": self.handle_clear_parking_lot,
             "Park": self.handle_park,
             "Leave": self.handle_leave,
             "Slot_number_for_car_with_number": self.handle_slot_for_car,
             "All_parked_vehicles": self.handle_all_parked_vehicles,
-            "Generate_report": self.handle_generate_report,  # <-- new
+            "Generate_report": self.handle_generate_report,
         }
-    
+
     def parse(self, query):
         tokens = query.strip().split()
         if not tokens:
@@ -40,6 +41,13 @@ class CommandParser:
                 logger.info("Created parking of %d slots", capacity)
         except (IndexError, ValueError) as e:
             logger.error("Invalid input for creating parking lot: %s", e)
+
+    def handle_clear_parking_lot(self, tokens):
+        try:
+            self.pm.clear_parking_lot()
+            logger.info("All slots have been cleared. The parking lot is now empty.")
+        except Exception as e:
+            logger.error("Error clearing parking lot: %s", e)
 
     def handle_park(self, tokens):
         try:
