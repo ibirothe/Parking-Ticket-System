@@ -29,12 +29,15 @@ python __main__.py --input_file example_input.txt
 
 ## Commands
 
-| Command                      | Description                              |
-| ---------------------------- | ---------------------------------------- |
-| `create_parking_lot <n>`     | Create a parking lot with `n` slots      |
-| `park <registration_number>` | Park a car in the nearest available slot |
-| `leave <slot_number>`        | Vacate the given parking slot            |
-| `status`                     | Show current parking status              |
+| Command                                 | Description                                                                 |
+| --------------------------------------- | --------------------------------------------------------------------------- |
+| `Create_parking_lot <n>`                | Create a parking lot with `n` slots                                         |
+| `Park <registration_number>`            | Park a car in the nearest available slot                                    |
+| `Leave <slot_number>`                   | Vacate the given parking slot                                               |
+| `Slot_number_for_car_with_number <reg>` | Find which slot a car with the given registration number is parked in       |
+| `All_parked_vehicles`                   | List all currently parked vehicle registration numbers                      |
+| `Generate_report <type>`                | Generate a report (`occupancy` or `clusters`) and save it as a `.png` image |
+| `Clean_parking_lot`                     | Remove all cars and reset all parking slots to empty                        |
 
 ---
 
